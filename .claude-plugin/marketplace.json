@@ -1,7 +1,16 @@
 {
   "name": "vbee-mods",
-  "owner": { "name": "trust-me-bro" },
+  "owner": {
+    "name": "trust-me-bro"
+  },
   "plugins": [
-    { "name": "vn-spinner", "source": "./mods/vn-spinner" }
+    {
+      "name": "vn-spinner",
+      "source": "./mods/vn-spinner"
+    },
+    {
+      "name": "cute-mascot",
+      "source": "./mods/cute-mascot"
+    }
   ]
 }
