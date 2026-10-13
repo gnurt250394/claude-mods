@@ -4,7 +4,8 @@ import type { EngineInterface, Register } from 'claude-code'
 import type { BeeEvent, BeeState } from './bee-state'
 import { transition } from './bee-state'
 import { beeText } from './bee-text'
-import { beeCommand } from './commands'
+import { alertFor } from './alert'
+import { STORE_FAILED, beeCommand } from './commands'
 import { encodeCells, frameFor } from './sprite'
 
 const bee = atom({ plugin: 'cute-mascot', key: 'bee' } as const, { kind: 'Idle' } as BeeState)
@@ -30,6 +31,14 @@ function apply($: EngineInterface, event: BeeEvent) {
   return update($, bee, state => transition(state, event))
 }
 
+async function readMuted($: EngineInterface) {
+  try {
+    return (await $.store.get('muted')) === true
+  } catch {
+    return false
+  }
+}
+
 async function readReducedMotion($: EngineInterface) {
   try {
     isReducedMotion = (await $.settings.read()).prefersReducedMotion === true
@@ -42,7 +51,8 @@ export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     await apply($, { type: 'session-start' })
     await update($, isHidden, () => false)
-    await update($, isMuted, () => false)
+    const isStoredMuted = await readMuted($)
+    await update($, isMuted, () => isStoredMuted)
     await readReducedMotion($)
     await $.command.register({ name: 'bee', description: 'Show or hide the bee: /bee, /bee hide' })
 
@@ -102,6 +112,19 @@ export const register: Register = on => {
 
   on('turn.complete', async ($, e, next) => {
     await apply($, { type: 'turn-end', reason: e.reason, durationMs: e.durationMs, agentId: e.agentId })
+    const alert = alertFor(
+      { reason: e.reason, durationMs: e.durationMs, agentId: e.agentId },
+      await read($, isMuted),
+    )
+
+    if (alert.sound && alert.notification) {
+      try {
+        await $.audio.play({ asset: 'sounds/ting.wav' })
+        await $.ui.notify(alert.notification.body, { title: alert.notification.title })
+      } catch {
+        // a blocked sound or notification leaves the Bee_State as it is
+      }
+    }
 
     return next(e)
   })
@@ -109,7 +132,17 @@ export const register: Register = on => {
   on('command.run', { command: 'bee' }, async ($, e) => {
     const flags = { isHidden: await read($, isHidden), isMuted: await read($, isMuted) }
     const reply = beeCommand(e.args, flags)
+
+    if (reply.flags.isMuted !== flags.isMuted) {
+      try {
+        await $.store.set('muted', reply.flags.isMuted)
+      } catch {
+        return { text: STORE_FAILED }
+      }
+    }
+
     await update($, isHidden, () => reply.flags.isHidden)
+    await update($, isMuted, () => reply.flags.isMuted)
 
     return { text: reply.text }
   })
