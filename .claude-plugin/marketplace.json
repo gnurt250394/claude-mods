@@ -1,0 +1,7 @@
+{
+  "name": "vbee-mods",
+  "owner": { "name": "trust-me-bro" },
+  "plugins": [
+    { "name": "vn-spinner", "source": "./mods/vn-spinner" }
+  ]
+}
