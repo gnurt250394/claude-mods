@@ -1,0 +1,6 @@
+{
+  "name": "cute-mascot",
+  "version": "0.1.0",
+  "description": "Draws a pixel-art bee above the prompt that reacts to each turn.",
+  "types": "./types/index.d.ts"
+}
