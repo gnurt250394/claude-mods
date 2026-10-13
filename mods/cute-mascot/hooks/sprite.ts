@@ -13,16 +13,9 @@ export type Sprite = readonly (readonly number[])[]
 
 const COLOUR_OF: Readonly<Record<string, number>> = { '.': EMPTY, Y: YELLOW, K: BLACK, W: WING }
 
-const IDLE_ART = [
-  '..K..K..',
-  '.YYYYYY.',
-  'YKYKYKYK',
-  'YKYKYYYY',
-  '.YKYKYY.',
-  '..YYYY..',
-  '.W....W.',
-  '........',
-]
+const WINGS_DOWN = ['..K..K..', '.YYYYYY.', 'YKYKYKYK', 'YKYKYYYY', '.YKYKYY.', '..YYYY..', '.W....W.', '........']
+const WINGS_UP = ['W.K..K.W', 'WYYYYYYW', 'YKYKYKYK', 'YKYKYYYY', '.YKYKYY.', '..YYYY..', '........', '........']
+const SAD_ART = ['..K..K..', '.YYYYYY.', 'YKYKYKYK', 'YKYKYYYY', '.YKYKKY.', '..YKKY..', '.W....W.', '........']
 
 function toSprite(art: readonly string[], offset: number): Sprite {
   return art.map(row =>
@@ -30,10 +23,26 @@ function toSprite(art: readonly string[], offset: number): Sprite {
   )
 }
 
-const IDLE_FRAME = toSprite(IDLE_ART, 0)
+const HAPPY_OFFSETS = [0, 1, 2, 3, 4, 3, 2, 1]
+const IDLE_FRAME = toSprite(WINGS_DOWN, 0)
+const WORKING_FRAMES = [IDLE_FRAME, toSprite(WINGS_UP, 0)]
+const SAD_FRAME = toSprite(SAD_ART, 0)
+const HAPPY_FRAMES = HAPPY_OFFSETS.map((offset, i) => toSprite(i % 2 === 0 ? WINGS_DOWN : WINGS_UP, offset))
 
-export function frameFor(_kind: BeeState['kind'], _tick: number, _isReducedMotion: boolean): Sprite {
-  return IDLE_FRAME
+/** One Frame per `tick`; with Reduced_Motion the first Frame of the state, whatever the `tick`. */
+export function frameFor(kind: BeeState['kind'], tick: number, isReducedMotion: boolean): Sprite {
+  const at = isReducedMotion ? 0 : tick
+
+  switch (kind) {
+    case 'Idle':
+      return IDLE_FRAME
+    case 'Working':
+      return WORKING_FRAMES[at % 2]
+    case 'Sad':
+      return SAD_FRAME
+    case 'Happy':
+      return HAPPY_FRAMES[at % 8]
+  }
 }
 
 /** Packs two stacked pixels into one `▀` cell: the upper one in the foreground, the lower in the background. */
