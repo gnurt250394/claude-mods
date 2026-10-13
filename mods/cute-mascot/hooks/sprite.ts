@@ -1,21 +1,65 @@
 import type { BeeState } from '../types'
 
-export const SPRITE_COLUMNS = 12
-export const SPRITE_ROWS = 4
+export const SPRITE_COLUMNS = 17
+export const SPRITE_ROWS = 6
 
 const EMPTY = 0x01000000
 const YELLOW = 0xffd21f
 const BLACK = 0x1a1a1a
 const WING = 0xe8f4ff
+const AMBER = 0xe08a00
+const LIGHT = 0xffe66b
+const WING_EDGE = 0xa9d3f5
+const WHITE = 0xffffff
+const OUTLINE = 0x7a4a00
 
 /** `SPRITE_COLUMNS` by `2 * SPRITE_ROWS` pixels, row-major. */
 export type Sprite = readonly (readonly number[])[]
 
-const COLOUR_OF: Readonly<Record<string, number>> = { '.': EMPTY, Y: YELLOW, K: BLACK, W: WING }
+const COLOUR_OF: Readonly<Record<string, number>> = { '.': EMPTY, Y: YELLOW, K: BLACK, W: WING, A: AMBER, L: LIGHT, E: WING_EDGE, H: WHITE, O: OUTLINE }
 
-const WINGS_DOWN = ['..K..K..', '.YYYYYY.', 'YKYKYKYK', 'YKYKYYYY', '.YKYKYY.', '..YYYY..', '.W....W.', '........']
-const WINGS_UP = ['W.K..K.W', 'WYYYYYYW', 'YKYKYKYK', 'YKYKYYYY', '.YKYKYY.', '..YYYY..', '........', '........']
-const SAD_ART = ['..K..K..', '.YYYYYY.', 'YKYKYKYK', 'YKYKYYYY', '.YKYKKY.', '..YKKY..', '.W....W.', '........']
+const WINGS_DOWN = [
+  '..........L...L',
+  '...........A.A.',
+  '............A..',
+  '..EEEEEEEEOOOO.',
+  '..EWWWWWWEOYYYO',
+  '..OYKYYKLLOYHKO',
+  '.OYYKYYKLLOYKKO',
+  'KOAAKAAKLLOAAAO',
+  '..OAKAAKLLOAAO.',
+  '..OOOOOOOOOOO..',
+  '.....K..K.K....',
+  '....K..K.K.....',
+]
+const WINGS_UP = [
+  '.....EEEE.L...L',
+  '....EWWWWE.A.A.',
+  '...EWWWWWWE.A..',
+  '...OOOOOOOOOOO.',
+  '..OYKYYKLLOYYYO',
+  '..OYKYYKLLOYHKO',
+  '.OYYKYYKLLOYKKO',
+  'KOAAKAAKLLOAAAO',
+  '..OAKAAKLLOAAO.',
+  '..OOOOOOOOOOO..',
+  '.....K..K.K....',
+  '....K..K.K.....',
+]
+const SAD_ART = [
+  '..........L...L',
+  '...........A.A.',
+  '...EEEEEEE..A..',
+  '...OOOOOOOOOOO.',
+  '..OYKYYKLLOYYYO',
+  '..OYKYYKLLOYHKO',
+  '.OYYKYYKLLOYKKO',
+  'KOAAKAAKLLOAKAO',
+  '..OAKAAKLLOKAE.',
+  '..OOOOOOOOOOO..',
+  '.....K..K.K....',
+  '....K..K.K.....',
+]
 
 function toSprite(art: readonly string[], offset: number): Sprite {
   return art.map(row =>
@@ -23,7 +67,7 @@ function toSprite(art: readonly string[], offset: number): Sprite {
   )
 }
 
-const HAPPY_OFFSETS = [0, 1, 2, 3, 4, 3, 2, 1]
+const HAPPY_OFFSETS = [0, 0, 1, 1, 2, 1, 1, 0]
 const IDLE_FRAME = toSprite(WINGS_DOWN, 0)
 const WORKING_FRAMES = [IDLE_FRAME, toSprite(WINGS_UP, 0)]
 const SAD_FRAME = toSprite(SAD_ART, 0)

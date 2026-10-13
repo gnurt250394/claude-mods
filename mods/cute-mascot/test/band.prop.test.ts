@@ -21,16 +21,16 @@ function xorshift(seed: number) {
 }
 
 const KINDS: BeeState['kind'][] = ['Idle', 'Working', 'Sad', 'Happy']
-const COLOURS = [0xffd21f, 0x1a1a1a, 0xe8f4ff, 0x01000000]
+const COLOURS = [0xffd21f, 0xe08a00, 0xffe66b, 0xa9d3f5, 0xffffff, 0x7a4a00, 0x1a1a1a, 0xe8f4ff, 0x01000000]
 
-test('4.1 4.2 4.3 4.11: every Frame is 12 by 4 cells of U+2580 or U+0020 in the four colours', () => {
+test('4.1 4.2 4.3 4.11: every Frame is 17 by 6 cells of U+2580 or U+0020 in the palette', () => {
   const bytes = (kind: BeeState['kind'], tick: number, reduced: boolean) => {
     const raw = Uint8Array.fromBase64(encodeCells(frameFor(kind, tick, reduced)))
 
     return new Uint32Array(raw.buffer, raw.byteOffset, raw.byteLength / 4)
   }
 
-  expect(SPRITE_COLUMNS * SPRITE_ROWS).toBe(48)
+  expect(SPRITE_COLUMNS * SPRITE_ROWS).toBe(102)
 
   for (const kind of KINDS) {
     for (let tick = 0; tick <= 100; tick++) {

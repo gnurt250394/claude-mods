@@ -12,8 +12,8 @@ const bee = atom({ plugin: 'cute-mascot', key: 'bee' } as const, { kind: 'Idle' 
 const isHidden = atom({ plugin: 'cute-mascot', key: 'isHidden' } as const, false)
 const isMuted = atom({ plugin: 'cute-mascot', key: 'isMuted' } as const, false)
 
-const MIN_COLUMNS = 20
-const SPRITE_WIDTH = 13
+const MIN_COLUMNS = 32
+const SPRITE_WIDTH = 18
 const FRAME_INTERVAL_MS = 250
 const SITE_KEY = 'bee'
 
@@ -159,11 +159,11 @@ export const register: Register = on => {
     const { Box, Button, Raster, Text } = $.ui.resolve(e)
 
     return (
-      <Box flexDirection="row" height={4}>
+      <Box flexDirection="row" height={6} marginTop={1}>
         <Raster
           key={SITE_KEY}
-          columns={12}
-          rows={4}
+          columns={17}
+          rows={6}
           cells={encodeCells(frameFor(state.kind, tick, isReducedMotion))}
         />
         <Box flexDirection="column" marginLeft={1} width={e.props.bodyColumns - SPRITE_WIDTH}>

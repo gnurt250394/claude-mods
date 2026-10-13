@@ -43,17 +43,17 @@ test('4.3: the Idle Bee_Text word for word', () => {
   expect(beeText({ kind: 'Idle' })).toBe('Rảnh quá, giao việc đi chứ 😴')
 })
 
-test('4.3 4.1: the Bee_Text box starts at column 14, past the 12 Raster columns', async ($, on) => {
+test('4.3 4.1: the Bee_Text box starts at column 19, past the 17 Raster columns', async ($, on) => {
   engine(on)
   await startSession($)
   const ui = await mountBand($)
   const raster = await ui.find({ type: 'Raster' })
 
-  expect(SPRITE_COLUMNS).toBe(12)
+  expect(SPRITE_COLUMNS).toBe(17)
   expect(raster).toBeDefined()
   expect(dump(await ui.drawn())).toContain('"marginLeft":1')
-  expect(dump(await ui.drawn())).toContain('"columns":12')
-  expect(dump(await ui.drawn())).toContain('"rows":4')
+  expect(dump(await ui.drawn())).toContain('"columns":17')
+  expect(dump(await ui.drawn())).toContain('"rows":6')
 })
 
 test('4.11: every Raster cell decodes to U+2580 or U+0020', () => {
@@ -65,14 +65,14 @@ test('4.11: every Raster cell decodes to U+2580 or U+0020', () => {
   }
 })
 
-test('4.9 4.10 5.1: the Band_Site hides under 20 columns and on a survey, and shows the Hide_Button', async ($, on) => {
+test('4.9 4.10 5.1: the Band_Site hides under 32 columns and on a survey, and shows the Hide_Button', async ($, on) => {
   engine(on)
   await startSession($)
-  const shown = await mountBand($, { ...BAND, bodyColumns: 20 }, 'a')
+  const shown = await mountBand($, { ...BAND, bodyColumns: 32 }, 'a')
   expect(dump(await shown.drawn())).toContain('Đuổi ong 🐝')
   expect(await shown.find({ key: 'hide' })).toBeDefined()
 
-  const narrow = await mountBand($, { ...BAND, bodyColumns: 19 }, 'b')
+  const narrow = await mountBand($, { ...BAND, bodyColumns: 31 }, 'b')
   expect(dump(await narrow.drawn())).toContain('engine band')
 
   const survey = await mountBand($, { ...BAND, hasSurvey: true }, 'c')
