@@ -53,3 +53,10 @@ export function remember(
 
   return { table: { ...table, [key]: value }, value }
 }
+
+export const TURN_PHRASES: readonly string[] = [
+  '🎉 Đã cày xong sau {t}',
+  '😎 Ngon lành sau {t}',
+  '🐝 Ong về tổ sau {t}',
+  '🥵 Vật vã {t} mới xong',
+]
